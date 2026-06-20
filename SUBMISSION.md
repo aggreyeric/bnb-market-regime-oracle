@@ -59,6 +59,43 @@ posture layer on top**.
 
 ---
 
+## 🏗️ Architecture (how a regime is decided)
+
+A deterministic, **no-look-ahead** pipeline — every signal, weight, and rule is auditable:
+
+```
+ CoinGecko (BTC OHLCV)        alternative.me (Fear & Greed)
+        │                              │
+        ▼                              ▼
+   data/loader.py  →  aligned daily feature frame
+        ▼
+ ┌──────────────────────────────────────────────┐
+ │  5 independent signal modules → [-1, +1]     │
+ │  momentum 0.30 · fear_greed 0.25 · vol 0.15  │   +1 = risk-on
+ │  funding-proxy 0.15 · flow-proxy 0.15        │   -1 = risk-off
+ └──────────────────┬───────────────────────────┘
+                    ▼ weighted fusion → composite score
+                    ▼ priority rule hierarchy (deterministic)
+ ┌──────────────────────────────────────────────┐
+ │  5-state classifier                          │   CAPITULATION > EUPHORIA >
+ │  (extreme regimes override trend regimes)    │   RISK_OFF > RISK_ON >
+ │                                              │   RANGE_BOUND (default)
+ └──────────────────┬───────────────────────────┘
+                    ▼ regime → posture map
+            target exposure + action
+        ┌─────────────┴──────────────┐
+        ▼                            ▼
+  vectorized backtest        MCP tool: get_market_regime
+  (no look-ahead, w/ costs)  (stdio → CMC Agent Hub skill)
+```
+
+**Why deterministic over ML:** an explainable, frozen rule hierarchy is what a risk-averse AI agent
+should call to *size* risk — no retraining drift, no black box, every decision reproducible. The
+fusion layer is feed-agnostic, so a real funding/on-chain feed can drop in as a new `Signal`
+subclass without touching the classifier or backtest.
+
+---
+
 ## 🛠️ Tech Stack
 
 - **Python 3.11+**, `pandas` / `numpy` for the vectorized, no-look-ahead backtest engine
