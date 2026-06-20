@@ -6,301 +6,173 @@
 
 *Fuses momentum, sentiment, volatility, funding & flow into one explainable regime — and a documented risk posture per regime.*
 
+[![Python](https://img.shields.io/badge/Python-3.11%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green)](LICENSE)
+[![Tests](https://img.shields.io/badge/tests-24%2F24%20passing-success)](tests/)
+[![Track](https://img.shields.io/badge/track-BNB%20AI%20Trading%20%7C%20Track%202-F0B90B)](https://dorahacks.io/hackathon/bnb-ai-trading)
+[![MCP](https://img.shields.io/badge/transport-MCP%20stdio-black)](src/market_regime_oracle/mcp_server.py)
+
 </div>
 
-<p align="center">
-  <a href="https://www.python.org/"><img alt="Python" src="https://img.shields.io/badge/Python-3.11%2B-3776AB?logo=python&logoColor=white"></a>
-  <a href="./LICENSE"><img alt="License" src="https://img.shields.io/badge/License-MIT-green"></a>
-  <img alt="Tests" src="https://img.shields.io/badge/tests-24%2F24%20passing-success">
-  <img alt="Track" src="https://img.shields.io/badge/track-BNB%20AI%20Trading%20%7C%20Track%202-F0B90B">
-  <img alt="Status" src="https://img.shields.io/badge/status-research%20%2F%20backtest-blueviolet">
-  <img alt="Transport" src="https://img.shields.io/badge/transport-MCP%20stdio-black">
-</p>
-
 ---
 
-A CoinMarketCap Agent Hub **Strategy Skill** (BNB Chain AI Trading Agent — **Track 2**) that
-fuses **5 market signals** into a **5-state regime classifier**, maps each regime to an explicit
-**trading posture**, and **backtests** the result against buy-and-hold with demo-ready equity-curve
-charts. Packaged as an **MCP server** so any MCP-compatible client (Claude Desktop, Cursor, the CMC
-Agent Hub) can call the `get_market_regime` tool.
+## What It Does
 
-> ⚠️ **Research / backtest artifact — Track 2 only.** No live trading, no wallet connection, no token
-> launch. Not submitted to any contest portal; only the admin approves submissions. **Nothing here is
-> financial advice.**
-
----
-
-## TL;DR — what it does
-
-Ask: *"What kind of BTC market is this, and how much risk should I take?"*
+Ask *"What kind of BTC market is this, and how much risk should I take?"*
 
 The oracle answers with one of **5 regimes** + a documented posture:
 
-| Regime | Target exposure | Posture / action |
-|---|---|---|
-| `RISK_ON` 🟢 | 100% | Uptrend — accumulate, full exposure |
-| `RANGE_BOUND` 🟡 | 40% | Sideways — light exposure, hold core |
-| `RISK_OFF` 🔵 | 20% | Downtrend — defensive, raise cash to ~80% |
-| `CAPITULATION` 🔴 | 10% | Panic sell-off — max defensive, near-full cash |
-| `EUPHORIA` 🟣 | 30% | Blow-off top — take profit, fade strength |
+| Regime | Target Exposure | Posture |
+|---|:---:|---|
+| 🟢 `RISK_ON` | 100% | Uptrend — full exposure |
+| 🟡 `RANGE_BOUND` | 40% | Sideways — light exposure |
+| 🔵 `RISK_OFF` | 20% | Downtrend — defensive |
+| 🔴 `CAPITULATION` | 10% | Panic — max defensive |
+| 🟣 `EUPHORIA` | 30% | Blow-off — take profit |
 
-The classifier is a priority-ordered, **deterministic** rule hierarchy over a fused composite score
-(extreme regimes `CAPITULATION` / `EUPHORIA` override the trend regimes).
-See [`src/market_regime_oracle/classifier/fusion.py`](src/market_regime_oracle/classifier/fusion.py).
+Built as an **MCP Strategy Skill** for the CoinMarketCap Agent Hub (BNB AI Trading — Track 2). Any MCP-compatible client (Claude Desktop, Cursor, CMC Agent Hub) calls `get_market_regime` to get a deterministic, no-look-ahead risk posture.
 
 ---
 
-## 📈 Headline result (real BTC data, ~1 year)
+## 📈 Headline Result
 
-> **In a down year for BTC (−37%), staying defensive in `RISK_OFF`/`CAPITULATION` cut drawdown
-> roughly in half and more than halved volatility — outperforming buy-and-hold by ~25 points
-> while still being long BTC in `RISK_ON`.**
+> **In a down year for BTC (−37%), the regime strategy did −12.7% — halving drawdown (−24% vs −51%) and halving volatility (19% vs 43%), outperforming buy-and-hold by ~25 points while still going long in uptrends.**
 
 | Metric | **Regime Strategy** | Buy & Hold |
 |---|:---:|:---:|
 | Total return | **−12.7%** | −37.4% |
 | Max drawdown | **−24.2%** | −51.2% |
 | Annualized volatility | **19.3%** | 43.1% |
-| Sharpe (rf 4%) | −0.82 | −0.97 |
-| Sortino | −1.01 | −1.32 |
-| Final equity ($10k start) | **$8,733** | $6,264 |
+| Sharpe (rf 4%) | **−0.82** | −0.97 |
+| Sortino | **−1.01** | −1.32 |
 
-*Data: CoinGecko BTC daily (2025-06-19 → 2026-06-17, 364 days). Start capital $10,000. Transaction
-cost 10 bps per unit of turnover. Strategy = regime posture; benchmark = 100% BTC buy-and-hold.*
-
-**Regime mix observed:** RISK_OFF 38%, RISK_ON 27%, RANGE_BOUND 25%, CAPITULATION 8% (acute panics),
-EUPHORIA 1.6% (blow-off).
+*Data: CoinGecko BTC daily (2025-06-19 → 2026-06-17, 364 days). Start $10,000. 10 bps/turnover cost.*
 
 ---
 
-## 🖼️ Visual results
+## 🖼️ Visual Results
 
-### Equity curve — Regime Strategy vs Buy & Hold
-<p align="center">
-  <img src="results/equity_curve.png" alt="Equity curve: regime strategy vs buy and hold" width="760">
-</p>
+### Equity Curve — Regime Strategy vs Buy & Hold
+<img src="results/equity_curve.png" alt="Equity curve" width="760">
 
-### Drawdown — strategy stays shallower than buy-and-hold
-<p align="center">
-  <img src="results/drawdown.png" alt="Drawdown comparison: strategy vs buy and hold" width="760">
-</p>
+### Drawdown — Strategy Stays Shallower
+<img src="results/drawdown.png" alt="Drawdown" width="760">
 
-### BTC price with the classified regime overlay (log scale)
-<p align="center">
-  <img src="results/regime_overlay.png" alt="BTC price with color-coded regime overlay" width="760">
-</p>
+### BTC Price with Regime Overlay
+<img src="results/regime_overlay.png" alt="Regime overlay" width="760">
 
-### Regime distribution & target exposure over time
-<p align="center">
-  <img src="results/regime_summary.png" alt="Regime distribution and target exposure" width="760">
-</p>
-
-> All four charts are regenerated by `python main.py` into `results/`. Raw CSVs and `metrics.json`
-> live alongside them.
+### Regime Distribution & Target Exposure
+<img src="results/regime_summary.png" alt="Regime summary" width="760">
 
 ---
 
 ## 🏗️ Architecture
 
 ```
- CoinGecko (BTC OHLCV)        alternative.me (Fear & Greed)
-        │                              │
-        └──────────────┬───────────────┘
+  CoinGecko (BTC OHLCV)         alternative.me (Fear & Greed)
+         │                              │
+         └──────────────┬───────────────┘
+                        ▼
+             ┌─────────────────────┐
+             │   data/loader.py    │  aligned daily features
+             └─────────┬───────────┘
                        ▼
-            ┌─────────────────────┐
-            │   data/loader.py    │   aligned daily feature frame
-            └─────────┬───────────┘
-                      ▼
-   ┌──────────────────────────────────────────┐
-   │     5 independent signal modules         │   each → score in [-1, +1]
-   │  momentum(0.30)  fear_greed(0.25)        │   +1 = risk-on,  -1 = risk-off
-   │  funding(0.15)   flows(0.15)   vol(0.15) │
-   └──────────────────────┬───────────────────┘
-                          ▼ weighted fusion
-                   composite score
-                          ▼ priority rule hierarchy
-   ┌──────────────────────────────────────────┐
-   │   5-state regime classifier              │   CAPITULATION > EUPHORIA >
-   │   (deterministic, no look-ahead)         │   RISK_OFF   > RISK_ON >
-   │                                          │   RANGE_BOUND (default)
-   └──────────────────────┬───────────────────┘
-                          ▼ regime → posture map
-                 target exposure + action
-            ┌───────────────┴───────────────┐
-            ▼                               ▼
-   vectorized backtest                MCP tool: get_market_regime
-   (no look-ahead, w/ costs)          (stdio, CMC Agent Hub skill)
-            │                               │
-            ▼                               ▼
-   metrics + 4 charts + CSVs         regime + posture read
+  ┌──────────────────────────────────────────┐
+  │     5 independent signal modules         │  each → score in [-1, +1]
+  │  momentum(0.30)  fear_greed(0.25)        │
+  │  funding(0.15)   flows(0.15)   vol(0.15) │
+  └──────────────────────┬───────────────────┘
+                         ▼ weighted fusion
+                  composite score
+                         ▼ priority rules
+  ┌──────────────────────────────────────────┐
+  │   5-state regime classifier              │  CAPITULATION > EUPHORIA >
+  │   (deterministic, no look-ahead)         │  RISK_OFF   > RISK_ON >
+  └──────────────────────┬───────────────────┘                          > RANGE_BOUND
+                         ▼
+                target exposure + action
+           ┌───────────────┴───────────────┐
+           ▼                               ▼
+    vectorized backtest                MCP tool: get_market_regime
+    (no look-ahead, w/ costs)          (stdio, Agent Hub skill)
 ```
 
-**Decision model (no look-ahead):** the regime and target exposure are decided at day *t*'s close
-from information up to and including *t*; the position earns the *t → t+1* BTC return. Rebalancing
-incurs a linear transaction cost.
+---
+
+## 🧩 The 5 Signals
+
+| Signal | Source | Weight |
+|---|---|:---:|
+| **RSI / MACD momentum** | CoinGecko price | 0.30 |
+| **Fear & Greed Index** | alternative.me | 0.25 |
+| **Volatility regime** | CoinGecko price | 0.15 |
+| **Funding rate proxy** | derived from price | 0.15 |
+| **Exchange flow proxy** | derived from volume | 0.15 |
+
+Each signal outputs a normalized bullishness score in `[-1, +1]`. All 5 are independently unit-tested.
+
+> **Transparency:** Funding rate and exchange flows have no free public feed. We reconstruct them from price/volume data as clearly-labeled proxies. Drop in real feeds anytime — the fusion layer is signal-agnostic.
 
 ---
 
-## 🧩 The 5 signals
-
-| # | Signal | Source | Real? | Weight |
-|---|---|---|---|---|
-| 1 | **RSI / MACD momentum** | CoinGecko price | ✅ real | 0.30 |
-| 2 | **Fear & Greed Index** | alternative.me | ✅ real | 0.25 |
-| 3 | **Volatility regime** | CoinGecko price | ✅ real | 0.15 |
-| 4 | **Funding rate** (proxy) | — (from price) | ⚠️ proxy | 0.15 |
-| 5 | **Exchange flow** (proxy) | — (from volume) | ⚠️ proxy | 0.15 |
-
-Each signal outputs a normalized bullishness score in `[-1, +1]` and is an independently runnable,
-unit-tested module under [`src/market_regime_oracle/signals/`](src/market_regime_oracle/signals/).
-
-### Assumptions & proxies (transparency)
-
-The hard rules allow **only** CoinGecko + alternative.me (public, free). Two signals have **no free
-public feed**, so they are **clearly-labeled proxies** reconstructed from authorized price/volume
-data — *not* fabricated "real" data:
-
-- **Funding rate (proxy).** Funding reflects crowded directional bets: strongly positive when the
-  market overheats (longs pay shorts), negative during flushes. We approximate it with a
-  risk-adjusted momentum term (recent return ÷ its vol). Columns prefixed `funding_proxy_*`.
-- **Exchange flows (proxy).** True on-chain flows need paid data. We reconstruct flow pressure from
-  **signed volume** (volume × sign of return): high-volume up-days ≈ accumulation/outflows
-  (risk-on); high-volume down-days ≈ distribution/inflows (risk-off). Columns prefixed `flow_proxy_*`.
-
-If you later connect a real funding/on-chain feed, drop in a new `Signal` subclass — the fusion layer
-is feed-agnostic.
-
----
-
-## 🚀 Quick start
+## 🚀 Quick Start
 
 ```bash
-git clone <repo> && cd market_regime_oracle
+git clone https://github.com/aggreyeric/bnb-market-regime-oracle.git
+cd bnb-market-regime-oracle
 pip install -r requirements.txt
 
-# 1) run the full pipeline: fetch -> classify -> backtest -> charts -> save results
+# Run full pipeline: fetch → classify → backtest → charts
 python main.py
-# (equivalently: PYTHONPATH=src python -m market_regime_oracle.run)
 
-# 2) run the test suite (offline, synthetic data — no network)
-PYTHONPATH=src:tests python -m pytest tests/
+# Run tests (offline, no network needed)
+PYTHONPATH=src python -m pytest tests/
 
-# 3) run as a CMC Agent Hub skill (MCP server over stdio)
+# Run as MCP server
 PYTHONPATH=src python -m market_regime_oracle.mcp_server
 
-# 4) ⭐ see the skill answer over MCP in 30s — live stdio round-trip (offline)
+# Live MCP demo (30 seconds)
 ./scripts/demo.sh
 ```
 
-Outputs land in `results/` (CSVs, `metrics.json`, PNG charts); raw API JSON is cached under
-`data_cache/` (gitignored) to stay gentle on free rate limits.
-
-> 💡 **No need to run anything to see the results.** The `results/` artifacts (charts, `metrics.json`,
-> CSVs) are committed, so you can view the full backtest without running a thing. The **test suite
-> is fully offline** (synthetic data — no network). Reproducing `results/` via `python main.py` needs
-> network on the first run to hit the free public APIs (no key required); raw responses are then
-> cached under `data_cache/` (gitignored) so reruns are network-free.
-
-### Run with Docker (one command)
-
+### Docker
 ```bash
-docker compose up --build run        # run the full pipeline; outputs in ./results
-docker compose up --build server     # start the MCP server over stdio
+docker compose up --build run    # full pipeline
+docker compose up --build server # MCP server
 ```
 
-See [`docker-compose.yml`](docker-compose.yml) and [`Dockerfile`](Dockerfile).
-
 ---
 
-## 🔌 CMC Agent Hub skill packaging
-
-Packaged as an **MCP server** — the same model the CMC Agent Hub uses to route prompts to cloud
-Skills. Any MCP-compatible client (Claude Desktop, Cursor, OpenClaw, VS Code, the CMC Agent Hub) can
-call the `get_market_regime` tool.
-
-- Manifest (marketplace format): [`packaging/cmc-skill/skill.md`](packaging/cmc-skill/skill.md)
-  and [`skill.json`](packaging/cmc-skill/skill.json)
-- MCP client config: [`packaging/cmc-skill/mcp_config.json`](packaging/cmc-skill/mcp_config.json)
-- Server: [`src/market_regime_oracle/mcp_server.py`](src/market_regime_oracle/mcp_server.py)
-- Verify the skill runs end-to-end:
-  `PYTHONPATH=src MRO_HOME=. python tests/_mcp_smoke.py`
-  (performs a real `initialize` → `tools/list` → `tools/call` round-trip)
-
-The CMC MCP already exposes the raw primitives this skill fuses
-(`get_crypto_technical_analysis`, `get_global_metrics_latest`,
-`get_global_crypto_derivatives_metrics`, on-chain metrics); this skill is the **fusion + posture**
-layer on top.
-
----
-
-## 📁 Project layout
+## 📁 Project Layout
 
 ```
 market_regime_oracle/
-├── README.md                 # this file
-├── LICENSE                   # MIT
-├── requirements.txt          # pinned deps
-├── pyproject.toml            # installable package + console script
-├── main.py                   # convenience entry point  ->  python main.py
-├── Dockerfile                # container image
-├── docker-compose.yml        # run pipeline / serve MCP
-├── docs/
-│   └── DEMO_SCRIPT.md        # 2-3 minute video walkthrough (click-by-click)
-├── scripts/
-│   └── demo.sh               # ⭐ live MCP stdio round-trip demo (offline)
-├── src/market_regime_oracle/ # core package
-│   ├── data/                 # CoinGecko + alternative.me loaders, HTTP, feature frame
-│   ├── signals/              # 5 independent, unit-tested signal modules
-│   ├── classifier/           # weighted fusion -> composite -> priority rules -> regime
-│   ├── backtest/             # vector engine, no look-ahead, with costs; metrics + trades
-│   ├── viz/                  # matplotlib equity / drawdown / regime-overlay / summary charts
-│   ├── mcp_server.py         # exposes get_market_regime + list_regimes over MCP stdio
-│   └── run.py                # end-to-end pipeline + CLI
-├── tests/                    # pytest: signals, classifier, backtest, mcp smoke
-├── packaging/cmc-skill/      # CMC Agent Hub skill manifest + mcp_config
-├── results/                  # generated CSV/JSON + PNG charts (demo artifacts)
-└── data_cache/               # cached raw API responses (gitignored)
+├── src/market_regime_oracle/
+│   ├── data/          # CoinGecko + alternative.me loaders
+│   ├── signals/       # 5 signal modules (unit-tested)
+│   ├── classifier/    # fusion → regime mapping
+│   ├── backtest/      # vectorized engine, no look-ahead
+│   ├── viz/           # equity/drawdown/regime charts
+│   └── mcp_server.py  # MCP stdio server
+├── tests/             # 24/24 passing
+├── results/           # CSVs, metrics.json, PNG charts
+├── scripts/demo.sh    # live MCP round-trip
+├── Dockerfile
+├── docker-compose.yml
+└── README.md
 ```
 
 ---
 
-## 🗂️ Results artifacts (`results/`)
+## 📚 Data Sources
 
-| File | What it is |
-|---|---|
-| `metrics.json` | Strategy vs buy-and-hold metrics (return, Sharpe, drawdown, …) |
-| `equity_curve.png` / `equity_curve.csv` | Daily equity of strategy vs buy-and-hold |
-| `drawdown.png` | Drawdown comparison |
-| `regime_overlay.png` | BTC price (log) with color-coded regime shading |
-| `regime_summary.png` | Regime distribution + target exposure over time |
-| `regime_timeseries.csv` | Per-day regime, composite & signal scores |
-| `regime_distribution.csv` | Count of days per regime |
-| `signal_weights.csv` | The fusion weights per signal |
-| `posture_mapping.csv` | Regime → target exposure + action |
-| `trades.csv` | Rebalance log from the backtest |
-| `dataset.csv` | The aligned daily feature frame |
+- **CoinGecko** v3 free API — BTC daily close + volume
+- **alternative.me** — Fear & Greed Index
 
----
-
-## 📚 Data sources
-
-- **CoinGecko** v3 public free API — BTC daily close + volume.
-- **alternative.me** — Fear & Greed Index history.
-
-Both are public and free. **No API keys are required or stored.**
-
----
-
-## ✅ Hard rules enforced
-
-- **Track 2 only** — research / backtest.
-- **No live trading, no wallet connection, no token launch.**
-- Not submitted to DoraHacks or any portal — admin approval only.
-- Only authorized public/free sources; proxies are clearly labeled.
+Both public, both free. **No API keys required.**
 
 ---
 
 ## 📜 License
 
-[MIT](LICENSE) © 2026 Market Regime Oracle.
+[MIT](LICENSE) © 2026
