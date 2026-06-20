@@ -1,0 +1,33 @@
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+*.egg
+build/
+dist/
+.eggs/
+
+# --- Test / type caches ---
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# --- Virtual envs ---
+.venv/
+venv/
+env/
+
+# --- Local data caches (raw API responses; not needed in repo) ---
+data_cache/
+
+# --- macOS / editor cruft ---
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*~
+
+# --- keep results/ tracked (demo artifacts: CSV/JSON + charts), ignore stray ---
+results/.DS_Store

@@ -1,0 +1,48 @@
+{
+  "$schema": "https://coinmarketcap.com/api/agent",
+  "name": "market-regime-oracle",
+  "title": "Market Regime Oracle",
+  "category": ["research", "risk"],
+  "type": "Strategy Skill",
+  "track": "BNB Chain AI Trading Agent Edition — Track 2 (Strategy Skills)",
+  "tags": [
+    "market", "BTC", "regime", "risk", "sentiment-data", "market-data",
+    "derivatives-market-data", "daily", "strategy", "backtest"
+  ],
+  "summary": "Conclusion-first 5-state BTC market-regime classifier (RISK_ON / RANGE_BOUND / RISK_OFF / CAPITULATION / EUPHORIA) with a documented trading posture per regime, backtested vs buy-and-hold.",
+  "use_when": "You need a single explainable answer to 'what kind of market is this and how much risk should I take' — for daily risk budgeting, BTC sizing, or a regime gate on top of other CMC skills.",
+  "do_not_use_for": "Live trade execution, order routing, wallet actions, or token launches. Research/backtest signal only.",
+  "transport": "mcp-stdio",
+  "inputs": [
+    {"name": "symbol", "type": "string", "default": "bitcoin", "required": false},
+    {"name": "days", "type": "string", "default": "365", "required": false},
+    {"name": "force_refresh", "type": "boolean", "default": false, "required": false}
+  ],
+  "outputs": [
+    "regime",
+    "recommended_posture",
+    "composite_score",
+    "signal_scores",
+    "regime_distribution_12m",
+    "backtest_vs_buy_hold",
+    "posture_table"
+  ],
+  "tools": [
+    {"name": "get_market_regime", "description": "Classify current BTC regime + return posture read and backtest context."},
+    {"name": "list_regimes", "description": "Return the 5 regimes with documented postures."}
+  ],
+  "posture_table": {
+    "RISK_ON": {"target_exposure": 1.0, "action": "Uptrend / accumulation — full exposure."},
+    "RANGE_BOUND": {"target_exposure": 0.4, "action": "Sideways / choppy — light exposure, hold core."},
+    "RISK_OFF": {"target_exposure": 0.2, "action": "Downtrend / defensive — reduce risk, raise cash to 80%."},
+    "CAPITULATION": {"target_exposure": 0.1, "action": "Panic sell-off / max defensive — near-full cash."},
+    "EUPHORIA": {"target_exposure": 0.3, "action": "Blow-off top — take profit, reduce to 30%, fade strength."}
+  },
+  "limits": [
+    "Research/backtest aid, not a trade instruction or financial advice.",
+    "Funding-rate and exchange-flow signals are documented proxies (no free public feed); not fabricated real data.",
+    "Default backtest window is ~1 year (CoinGecko free public tier daily-history cap without a demo key)."
+  ],
+  "data_sources": ["CoinGecko (public, free)", "alternative.me Fear & Greed (public, free)"],
+  "hard_rules": ["Track 2 only — no live trading, wallet, or token launch.", "Not submitted to any external portal; admin approves all submissions."]
+}

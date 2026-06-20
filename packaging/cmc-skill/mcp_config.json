@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "market-regime-oracle": {
+      "command": "python",
+      "args": ["-m", "market_regime_oracle.mcp_server"],
+      "env": {
+        "PYTHONPATH": "./src",
+        "MRO_HOME": "."
+      }
+    }
+  }
+}

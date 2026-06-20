@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "market-regime-oracle"
+version = "1.0.0"
+description = "CMC Strategy Skill: fuses 5 signals into a 5-state BTC market-regime classifier with posture mapping, backtested vs buy-and-hold."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "Market Regime Oracle" }]
+keywords = ["crypto", "regime", "classification", "backtest", "cmc", "mcp", "bitcoin"]
+dependencies = [
+    "requests==2.34.2",
+    "numpy==2.4.6",
+    "pandas==3.0.3",
+    "matplotlib==3.11.0",
+    "mcp==1.27.1",
+]
+
+[project.optional-dependencies]
+dev = ["pytest"]
+
+[project.scripts]
+market-regime-oracle = "market_regime_oracle.run:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
