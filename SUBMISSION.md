@@ -18,6 +18,21 @@ Paste the blocks below into the DoraHacks submission form.
 Ask *"what kind of market is this, and how much risk should I take?"* — get one explainable regime
 plus a documented trading posture, backtested against buy-and-hold.
 
+## 🎤 Elevator pitch
+
+**Market Regime Oracle** is an MCP-server **Strategy Skill** (BNB AI Trading, Track 2) that answers
+the one question every trader actually asks — *"what kind of market is this, and how much risk should
+I take?"* — by fusing five market signals (RSI/MACD momentum, Fear & Greed, volatility, a
+funding-rate proxy, and an exchange-flow proxy) into a single composite score and mapping every day
+to one of five explainable regimes (`RISK_ON`, `RANGE_BOUND`, `RISK_OFF`, `CAPITULATION`,
+`EUPHORIA`), each with an explicit target exposure. Because the classifier is a **deterministic,
+no-look-ahead priority-rule hierarchy** — not a black box — any MCP client (Claude Desktop, Cursor,
+the CMC Agent Hub) can call `get_market_regime` to size risk reproducibly. Backtested on ~1 year of
+real BTC data, in a year the asset fell 37%, staying defensive in `RISK_OFF`/`CAPITULATION` **halved
+the drawdown (−24% vs −51%) and more than halved volatility**, outperforming buy-and-hold by ~25
+points while still holding BTC in uptrends. It's the auditable, composable risk-budgeting brain an
+AI trading agent should call *before* sizing a position.
+
 ## 📝 Description
 
 **Market Regime Oracle** is a research/backtest **Strategy Skill** (Track 2) that fuses **five market
