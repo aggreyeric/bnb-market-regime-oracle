@@ -1,0 +1,24 @@
+{
+  "strategy": {
+    "total_return": -0.12674911046391857,
+    "cagr": -0.1274009539351133,
+    "annualized_volatility": 0.1929116040699503,
+    "sharpe": -0.8168812244388,
+    "sortino": -1.006123935803376,
+    "max_drawdown": -0.2421719991554081,
+    "win_rate": 0.4793388429752066,
+    "turnover_per_day": 0.07637362637362637,
+    "final_equity": 8732.508895360814
+  },
+  "buy_hold": {
+    "total_return": -0.3735938142781132,
+    "cagr": -0.3752060907303544,
+    "annualized_volatility": 0.4305173240082303,
+    "sharpe": -0.9684769853334335,
+    "sortino": -1.3170465453774567,
+    "max_drawdown": -0.5122211357844959,
+    "win_rate": 0.4793388429752066,
+    "turnover_per_day": 1.0,
+    "final_equity": 6264.061857218868
+  }
+}

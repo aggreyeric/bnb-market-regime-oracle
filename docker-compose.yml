@@ -1,0 +1,39 @@
+# Market Regime Oracle — standalone orchestration.
+#
+#   docker compose up --build run      # run the full backtest pipeline
+#   docker compose run --rm tests      # run the pytest suite (offline)
+#   docker compose up server           # start the MCP server over stdio
+#
+# Outputs land in ./results on the host (mounted volume); raw API JSON is cached
+# in ./data_cache so reruns are network-free.
+services:
+  run:
+    build: .
+    image: market-regime-oracle:latest
+    container_name: mro-pipeline
+    command: ["python", "main.py"]
+    environment:
+      # optional: force a fresh data pull instead of the shipped cache
+      MRO_HOME: /app
+    volumes:
+      - ./results:/app/results
+      - ./data_cache:/app/data_cache
+
+  tests:
+    build: .
+    image: market-regime-oracle:latest
+    container_name: mro-tests
+    entrypoint: ["python", "-m"]
+    command: ["pytest", "tests/", "-q"]
+    environment:
+      PYTHONPATH: /app/src:/app/tests
+
+  server:
+    build: .
+    image: market-regime-oracle:latest
+    container_name: mro-mcp-server
+    entrypoint: ["python", "-m", "market_regime_oracle.mcp_server"]
+    stdin_open: true
+    volumes:
+      - ./results:/app/results
+      - ./data_cache:/app/data_cache

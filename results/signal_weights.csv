@@ -1,0 +1,6 @@
+signal,weight,is_proxy
+momentum,0.3,False
+fear_greed,0.25,False
+volatility,0.15,False
+funding,0.15,True
+exchange_flows,0.15,True

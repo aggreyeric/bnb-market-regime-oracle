@@ -1,0 +1,6 @@
+regime,target_exposure,action
+RISK_ON,1.0,Uptrend / accumulation — full exposure to BTC.
+RANGE_BOUND,0.4,"Sideways / choppy — light exposure, hold core, avoid adding."
+RISK_OFF,0.2,"Downtrend / defensive — reduce risk, raise cash to 80%."
+CAPITULATION,0.1,"Panic sell-off / max defensive — near-full cash, wait for stabilization."
+EUPHORIA,0.3,"Blow-off top — take profit, reduce to 30%, fade strength."
