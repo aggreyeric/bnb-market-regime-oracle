@@ -176,3 +176,7 @@ Both public, both free. **No API keys required.**
 ## 📜 License
 
 [MIT](LICENSE) © 2026
+
+## 🤖 AI Assistants
+
+→ See [CLAUDE.md](./CLAUDE.md) for AI coding assistant context.
