@@ -19,6 +19,11 @@ htmlcov/
 venv/
 env/
 
+# --- Env / secrets ---
+.env
+.env.*
+!.env.example
+
 # --- Local data caches (raw API responses; not needed in repo) ---
 data_cache/
 

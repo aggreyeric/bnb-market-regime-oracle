@@ -1,0 +1,15 @@
+tests/test_classifier.py::test_weights_normalized PASSED                 [ 50%]
+tests/test_signals.py::test_signal_score_range_and_no_nan[momentum] PASSED [ 54%]
+tests/test_signals.py::test_signal_score_range_and_no_nan[fear_greed] PASSED [ 58%]
+tests/test_signals.py::test_signal_score_range_and_no_nan[volatility] PASSED [ 62%]
+tests/test_signals.py::test_signal_score_range_and_no_nan[funding] PASSED [ 66%]
+tests/test_signals.py::test_signal_score_range_and_no_nan[exchange_flows] PASSED [ 70%]
+tests/test_signals.py::test_signal_idempotent_and_independent[momentum] PASSED [ 75%]
+tests/test_signals.py::test_signal_idempotent_and_independent[fear_greed] PASSED [ 79%]
+tests/test_signals.py::test_signal_idempotent_and_independent[volatility] PASSED [ 83%]
+tests/test_signals.py::test_signal_idempotent_and_independent[funding] PASSED [ 87%]
+tests/test_signals.py::test_signal_idempotent_and_independent[exchange_flows] PASSED [ 91%]
+tests/test_signals.py::test_signal_names_unique PASSED                   [ 95%]
+tests/test_signals.py::test_proxy_flags_documented PASSED                [100%]
+
+============================== 24 passed in 0.07s ==============================
